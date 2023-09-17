@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://mcqrx5tn3qt3"]
+
+[ext_resource type="Script" path="res://Label.gd" id="2_0w3y4"]
+[ext_resource type="Script" path="res://MeshInstance3D.gd" id="2_7hose"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+texture_filter = 1
+custom_minimum_size = Vector2(1000, 1000)
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("2_7hose")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+script = ExtResource("2_0w3y4")
