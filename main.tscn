@@ -12,6 +12,11 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("2_7hose")
 
+[node name="Kernel_rect" type="TextureRect" parent="TextureRect"]
+visible = false
+offset_right = 734.0
+offset_bottom = 673.0
+
 [node name="Label" type="Label" parent="."]
 offset_right = 40.0
 offset_bottom = 23.0

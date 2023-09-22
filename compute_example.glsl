@@ -26,7 +26,7 @@ float growth(float U) {
 	return 0 + float((U>=0.12)&&(U<=0.15)) - float((U<0.12)||(U>0.15));
 }
 
-const float frequency = 1.0/1000.0;
+const float frequency = 1.0/10.0;
 
 void main() {
 	uint pos = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * my_data_buffer.size;

@@ -11,8 +11,8 @@ var buffer2
 var buffer3
 var output_tex
 
-const s = 100;
-const k_radius = 5;
+const s = 1000;
+const k_radius = 10;
 const k = 2 * k_radius + 1;
 
 func _input(event):
@@ -58,15 +58,20 @@ func _ready():
 	var kernel = PackedFloat32Array();
 	for i in range(k * k):
 		kernel.push_back(1);
-	kernel[k_radius + k_radius * k] = 0;
+	for i in range(k):
+		for j in range(k):
+			var tmp : float = sqrt((float(i) - float(k_radius)) ** 2 + (float(j) - float(k_radius)) ** 2) / k_radius
+			if tmp < 1.0 :
+				kernel[i + j * k] = exp(-((tmp-0.5)/0.15)**2 / 2)
+			else :
+				kernel[i + j * k] = 0
 	var kernel_sum = 0;
 	var tmp_string = ""
 	for i in kernel.size():
-		if i % k == 0:
-			tmp_string += "\n";
-		tmp_string += str(kernel[i]);
 		kernel_sum += kernel[i];
-	print(tmp_string);
+	var kernelimg = Image.create_from_data(k, k, false, Image.FORMAT_RF, kernel.to_byte_array())
+	var kerneltexture = ImageTexture.create_from_image(kernelimg)
+	$"Kernel_rect".texture = kerneltexture
 	for i in kernel.size():
 		kernel[i] /= kernel_sum;
 	var kernel_bytes :PackedByteArray = PackedInt32Array([k]).to_byte_array()
