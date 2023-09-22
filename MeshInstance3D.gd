@@ -54,7 +54,7 @@ func _ready():
 	buffer = rd.storage_buffer_create(input_bytes.size(), input_bytes)
 	buffer2 = rd.storage_buffer_create(input_bytes.size(), input_bytes)
 
-	var kernel = PackedInt32Array(
+	var kernel = PackedFloat32Array(
 		[
 		 1,1,1,
 		 1,0,1,
@@ -64,8 +64,8 @@ func _ready():
 	for i in kernel.size():
 		kernel_sum += kernel[i];
 	kernel_sum *= states;
-	#for i in kernel.size():
-	#	kernel[i] = kernel[i] / kernel_sum;
+	for i in kernel.size():
+		kernel[i] /= kernel_sum;
 	var kernel_bytes :PackedByteArray = PackedInt32Array([3]).to_byte_array()
 	kernel_bytes.append_array(kernel.to_byte_array())
 	buffer3 = rd.storage_buffer_create(kernel_bytes.size(), kernel_bytes)
