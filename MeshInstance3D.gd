@@ -1,6 +1,6 @@
 extends TextureRect
 
-var arr :PackedInt32Array = PackedInt32Array()
+var arr :PackedFloat32Array = PackedFloat32Array()
 var rd := RenderingServer.create_local_rendering_device()
 
 var shader
@@ -12,13 +12,12 @@ var buffer3
 var output_tex
 
 const s = 300;
-const states = 12;
 
 func _input(event):
 	if event is InputEventMouseButton:
 		arr.clear()
 		for i in range(s * s):
-			arr.push_back(randi() % states + 1)
+			arr.push_back(randf())
 		var input_bytes :PackedByteArray = PackedInt32Array([s]).to_byte_array()
 		input_bytes.append_array(arr.to_byte_array())
 		rd.buffer_update(buffer, 0, input_bytes.size(), input_bytes)
@@ -31,7 +30,7 @@ func _ready():
 	pipeline = rd.compute_pipeline_create(shader)
 	randomize()
 	for i in range(s * s):
-		arr.push_back(randi() % states + 1)
+		arr.push_back(randf())
 	var fmt := RDTextureFormat.new()
 	fmt.width = s
 	fmt.height = s
@@ -63,7 +62,6 @@ func _ready():
 	var kernel_sum = 0;
 	for i in kernel.size():
 		kernel_sum += kernel[i];
-	kernel_sum *= states;
 	for i in kernel.size():
 		kernel[i] /= kernel_sum;
 	var kernel_bytes :PackedByteArray = PackedInt32Array([3]).to_byte_array()
@@ -95,7 +93,6 @@ func _process(delta):
 	rd.sync()
 	var output_bytes := rd.buffer_get_data(buffer2)
 	rd.buffer_update(buffer, 0, output_bytes.size(), output_bytes)
-	arr = output_bytes.to_int32_array()
 	var byte_data : PackedByteArray = rd.texture_get_data(output_tex, 0)
 	var image := Image.create_from_data(s, s, false, Image.FORMAT_RGBAF, byte_data)
 	texture.update(image)
