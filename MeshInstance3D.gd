@@ -8,6 +8,7 @@ var pipeline
 var uniform_set
 var buffer
 var buffer2
+var buffer3
 var output_tex
 
 const s = 1000;
@@ -17,7 +18,8 @@ func _input(event):
 		arr.clear()
 		for i in range(s * s):
 			arr.push_back(1 if randi() % 10 < 2 else 0)
-		var input_bytes := arr.to_byte_array()
+		var input_bytes :PackedByteArray = PackedInt32Array([s]).to_byte_array()
+		input_bytes.append_array(arr.to_byte_array())
 		rd.buffer_update(buffer, 0, input_bytes.size(), input_bytes)
 
 # Called when the node enters the scene tree for the first time.
@@ -46,9 +48,18 @@ func _ready():
 	output_tex_uniform.binding = 1
 	output_tex_uniform.add_id(output_tex)
 
-	var input_bytes := arr.to_byte_array()
+	var input_bytes :PackedByteArray = PackedInt32Array([s]).to_byte_array()
+	input_bytes.append_array(arr.to_byte_array())
 	buffer = rd.storage_buffer_create(input_bytes.size(), input_bytes)
 	buffer2 = rd.storage_buffer_create(input_bytes.size(), input_bytes)
+
+	var kernel_bytes :PackedByteArray = PackedInt32Array([3]).to_byte_array()
+	kernel_bytes.append_array( PackedInt32Array(
+		[
+		 1,1,1,
+		 1,0,1,
+		 1,1,1]).to_byte_array())
+	buffer3 = rd.storage_buffer_create(kernel_bytes.size(), kernel_bytes)
 	# Create a uniform to assign the buffer to the rendering device
 	var uniform := RDUniform.new()
 	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
@@ -58,7 +69,11 @@ func _ready():
 	uniform2.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
 	uniform2.binding = 2 
 	uniform2.add_id(buffer2)
-	uniform_set = rd.uniform_set_create([uniform, output_tex_uniform, uniform2], shader, 0)
+	var uniform3 := RDUniform.new()
+	uniform3.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
+	uniform3.binding = 3
+	uniform3.add_id(buffer3)
+	uniform_set = rd.uniform_set_create([uniform, output_tex_uniform, uniform2, uniform3], shader, 0)
 	pass
 
 func _process(delta):
