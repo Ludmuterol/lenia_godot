@@ -23,10 +23,10 @@ layout(set = 0, binding = 3, std430) restrict buffer MyDataBuffer3 {
 } kernel_buffer;
 
 float growth(float U) {
-	return 0 + float((U>=0.20)&&(U<=0.25)) - float((U<=0.19)||(U>=0.33));
+	return 0 + float((U>=0.12)&&(U<=0.15)) - float((U<0.12)||(U>0.15));
 }
 
-const float frequency = 1.0/10.0;
+const float frequency = 1.0/1000.0;
 
 void main() {
 	uint pos = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * my_data_buffer.size;
