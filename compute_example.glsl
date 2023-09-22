@@ -23,7 +23,9 @@ layout(set = 0, binding = 3, std430) restrict buffer MyDataBuffer3 {
 } kernel_buffer;
 
 float growth(float U) {
-	return (exp(-pow((U-0.135)/0.015, 2.0) / 2.0) * 2.0 - 1.0);
+	float m = 0.15;
+	float s = 0.015;
+	return (exp(-pow((U-m)/s, 2.0) / 2.0) * 2.0 - 1.0);
 }
 
 const float frequency = 1.0/10.0;
