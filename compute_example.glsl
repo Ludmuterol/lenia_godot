@@ -35,7 +35,7 @@ void main() {
 			sum += my_data_buffer.data[tmp_kernel_pos] * kernel_buffer.data[i + kernel_buffer.size * j];
 		}
 	}
-	out_data_buffer.data[pos] = int((my_data_buffer.data[pos] == 0 && sum == 3)||(my_data_buffer.data[pos] == 1 && (sum == 3 || sum == 4)));
+	out_data_buffer.data[pos] = int((my_data_buffer.data[pos] == 0 && sum == 3)||(my_data_buffer.data[pos] == 1 && (sum == 3 || sum == 2)));
 	vec4 pixel = vec4(1.0, 1.0, 1.0, 1.0);
 	pixel.xyz = vec3(float(out_data_buffer.data[pos]));
 	imageStore(OUTPUT_TEXTURE, ivec2(gl_GlobalInvocationID.xy), pixel);
