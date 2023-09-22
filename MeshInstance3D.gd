@@ -11,13 +11,14 @@ var buffer2
 var buffer3
 var output_tex
 
-const s = 1000;
+const s = 300;
+const states = 12;
 
 func _input(event):
 	if event is InputEventMouseButton:
 		arr.clear()
 		for i in range(s * s):
-			arr.push_back(1 if randi() % 10 < 2 else 0)
+			arr.push_back(randi() % states + 1)
 		var input_bytes :PackedByteArray = PackedInt32Array([s]).to_byte_array()
 		input_bytes.append_array(arr.to_byte_array())
 		rd.buffer_update(buffer, 0, input_bytes.size(), input_bytes)
@@ -30,7 +31,7 @@ func _ready():
 	pipeline = rd.compute_pipeline_create(shader)
 	randomize()
 	for i in range(s * s):
-		arr.push_back(randi() % 2)
+		arr.push_back(randi() % states + 1)
 	var fmt := RDTextureFormat.new()
 	fmt.width = s
 	fmt.height = s
@@ -53,12 +54,20 @@ func _ready():
 	buffer = rd.storage_buffer_create(input_bytes.size(), input_bytes)
 	buffer2 = rd.storage_buffer_create(input_bytes.size(), input_bytes)
 
-	var kernel_bytes :PackedByteArray = PackedInt32Array([3]).to_byte_array()
-	kernel_bytes.append_array( PackedInt32Array(
+	var kernel = PackedInt32Array(
 		[
 		 1,1,1,
 		 1,0,1,
-		 1,1,1]).to_byte_array())
+		 1,1,1]
+	);
+	var kernel_sum = 0;
+	for i in kernel.size():
+		kernel_sum += kernel[i];
+	kernel_sum *= states;
+	#for i in kernel.size():
+	#	kernel[i] = kernel[i] / kernel_sum;
+	var kernel_bytes :PackedByteArray = PackedInt32Array([3]).to_byte_array()
+	kernel_bytes.append_array(kernel.to_byte_array())
 	buffer3 = rd.storage_buffer_create(kernel_bytes.size(), kernel_bytes)
 	# Create a uniform to assign the buffer to the rendering device
 	var uniform := RDUniform.new()

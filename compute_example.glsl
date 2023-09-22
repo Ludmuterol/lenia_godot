@@ -22,9 +22,16 @@ layout(set = 0, binding = 3, std430) restrict buffer MyDataBuffer3 {
 	int data[];
 } kernel_buffer;
 
+const int states = 12;
+
+int growth(int U) {
+	return 0 + int((U>=20)&&(U<=25)) - int((U<=18)||(U>=33));
+	//return 0 + int((U>=0.20)&&(U<=0.25)) - int((U<=0.18)||(U>=0.33));
+}
+
 void main() {
 	uint pos = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y * my_data_buffer.size;
-	int sum = 0;
+	double sum = 0;
 	for (int i = 0; i < kernel_buffer.size; i++) {
 		int tmp_kernel_pos_x = int(gl_GlobalInvocationID.x) + i - kernel_buffer.size / 2;
 		tmp_kernel_pos_x = tmp_kernel_pos_x - my_data_buffer.size * int(tmp_kernel_pos_x >= my_data_buffer.size) + my_data_buffer.size * int(tmp_kernel_pos_x < 0);
@@ -32,11 +39,11 @@ void main() {
 			int tmp_kernel_pos_y = int(gl_GlobalInvocationID.y) + j - kernel_buffer.size / 2;
 			tmp_kernel_pos_y = tmp_kernel_pos_y - my_data_buffer.size * int(tmp_kernel_pos_y >= my_data_buffer.size) + my_data_buffer.size * int(tmp_kernel_pos_y < 0);
 			int tmp_kernel_pos = tmp_kernel_pos_x + tmp_kernel_pos_y * my_data_buffer.size;
-			sum += my_data_buffer.data[tmp_kernel_pos] * kernel_buffer.data[i + kernel_buffer.size * j];
+			sum += double(my_data_buffer.data[tmp_kernel_pos]) * kernel_buffer.data[i + kernel_buffer.size * j];
 		}
 	}
-	out_data_buffer.data[pos] = int((my_data_buffer.data[pos] == 0 && sum == 3)||(my_data_buffer.data[pos] == 1 && (sum == 3 || sum == 2)));
+	out_data_buffer.data[pos] = clamp( my_data_buffer.data[pos] + growth(int(sum)), 0, states);
 	vec4 pixel = vec4(1.0, 1.0, 1.0, 1.0);
-	pixel.xyz = vec3(float(out_data_buffer.data[pos]));
+	pixel.xyz = vec3(float(out_data_buffer.data[pos]) / float(states));
 	imageStore(OUTPUT_TEXTURE, ivec2(gl_GlobalInvocationID.xy), pixel);
 }
