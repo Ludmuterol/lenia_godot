@@ -1,4 +1,6 @@
 # lenia_godot
+Lenia in Godot 4.1.1 using a Computeshader
+
 Initially generates an empty playfield with the "Orbium" Preloaded
 On InputEventMouseButton generates a new random playfield
 the global const s is the width and height of the Playfield. It gets shared to the computeshader via Uniform buffer, so you only need to change it in the gdscript.
