@@ -1,5 +1,5 @@
 # lenia_godot
-Lenia in Godot 4.1.1 using a Computeshader
+[Lenia](https://chakazul.github.io/lenia.html) in Godot 4.1.1 using a Computeshader
 
 Initially generates an empty playfield with the "Orbium" Preloaded
 On InputEventMouseButton generates a new random playfield
